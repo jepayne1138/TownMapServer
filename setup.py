@@ -18,7 +18,7 @@ setup(
         'Programming Language :: Python :: Implementation :: CPython',
         'License :: OSI Approved :: BSD License',
     ],
-    entry_point={
+    entry_points={
         'console_scripts': [
             'server = townmapserver.console:main',
         ],
