@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='TownMapServer',
-    packages=['townmapserver'],
+    packages=['townmapserver', 'townmapserver.resources'],
     version='0.0a1',
     description='Server for the backend of the Town Map app.',
     author='James Payne',
@@ -20,7 +20,7 @@ setup(
     ],
     entry_point={
         'console_scripts': [
-            'server = townmapserver.server:main'
+            'server = townmapserver.console:main',
         ],
     }
 )

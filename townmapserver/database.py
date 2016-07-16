@@ -2,7 +2,6 @@ import datetime
 
 import flask_sqlalchemy
 
-import townmapserver.server as server
 import townmapserver.config_manager as cm
 
 
@@ -12,12 +11,7 @@ DATABASE_URI = 'postgresql://{User}:{Password}@{Host}:{Port}/{Name}'.format(
     **cm.config['Database']
 )
 
-
-server.flaskApp.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
-# Disable Flask-SQLAlchemy tracking of modification to objects
-# See: http://flask-sqlalchemy.pocoo.org/2.1/config/
-server.flaskApp.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = flask_sqlalchemy.SQLAlchemy(server.flaskApp)
+db = flask_sqlalchemy.SQLAlchemy()
 
 
 class User(db.Model):
@@ -58,3 +52,12 @@ class Catch(db.Model):
         if catchTime is None:
             catchTime = datetime.datetime.utcnow()
         self.catchTime = catchTime
+
+
+def initialize_app(app):
+    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
+    # Disable Flask-SQLAlchemy tracking of modification to objects
+    # See: http://flask-sqlalchemy.pocoo.org/2.1/config/
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    db.init_app(app)

@@ -1,4 +1,5 @@
 """Handles the console interface for the Town Map Server application"""
+import sys
 import argparse
 
 
@@ -53,3 +54,8 @@ def parse_arguments(args):
     build_database_parser(subparsers)
 
     return parser.parse_args(args)
+
+
+def main():
+    args = parse_arguments(sys.argv[1:])
+    # launch_server(args.address, args.port)
