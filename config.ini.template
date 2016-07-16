@@ -1,0 +1,6 @@
+[Database]
+User='postgres_login_role_name'
+Password='postgres_login_role_password'
+Host='localhost'
+Port='5432'
+Name='database_name'
