@@ -39,6 +39,9 @@ def build_database_parser(subparsers):
         'password', type=str,
         help='Password of Postgres login role with create permissions.'
     )
+    db_connection_uri_parser = db_subparser.add_parser(
+        'uri', help='Display the connection URI'
+    )
 
     return db_parser
 
@@ -61,6 +64,12 @@ def parse_arguments(args):
 def handle_command_database(args):
     if args.subcommand == 'create':
         database.create_schema(server.flaskApp, args.username, args.password)
+    if args.subcommand == 'uri':
+        print(database.build_connection_uri())
+
+
+def handle_command_run(args):
+    raise NotImplementedError('Run command not yet implemented!')
 
 
 def handle_command(args):
