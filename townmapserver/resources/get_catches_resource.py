@@ -1,20 +1,22 @@
-import flask.ext.restful as restful
+import flask_restful as restful
+import flask_restful.reqparse as reqparse
+import flask_restful.fields as fields
 
-import townmapserver.resources.resource_base as rb
+from townmapserver.resources import resource_base as rb
 import townmapserver.database as database
 
 db = database.db
 
 
 GET_CATCHES_MARSHALLER = {
-    'trainerName': restful.fields.String(attribute=lambda u: u.trainerName),
-    'trainerLevel': restful.fields.Integer(attribute=lambda u: u.trainerLevel),
-    'usingLure': restful.fields.Integer,
-    'uwingIncense': restful.fields.Boolean,
-    'creatureId': restful.fields.Boolean,
-    'latitude': restful.fields.Float,
-    'longitude': restful.fields.Float,
-    'catchTime': restful.fields.Float,
+    'trainerName': fields.String(attribute=lambda u: u.trainerName),
+    'trainerLevel': fields.Integer(attribute=lambda u: u.trainerLevel),
+    'usingLure': fields.Integer,
+    'uwingIncense': fields.Boolean,
+    'creatureId': fields.Boolean,
+    'latitude': fields.Float,
+    'longitude': fields.Float,
+    'catchTime': fields.Float,
 }
 
 
@@ -31,7 +33,7 @@ class GetCatches(rb.ResourceBase):
     @restful.marshal_with(GET_CATCHES_MARSHALLER)
     def get(self):
         """Query catches with possible filters"""
-        parser = restful.reqparse.RequestParser()
+        parser = reqparse.RequestParser()
 
         # TODO: Set up this authentication after I get the API working
         # parser.add_argument('token', type=str, required=True, help='Invalid access token')
@@ -56,7 +58,7 @@ class GetCatches(rb.ResourceBase):
     @restful.marshal_with(GET_CATCHES_MARSHALLER)
     def post(self):
         """Add a catch"""
-        parser = restful.reqparse.RequestParser()
+        parser = reqparse.RequestParser()
 
         # TODO: Set up this authentication after I get the API working
         # parser.add_argument('token', type=str, required=True, help='Invalid access token')

@@ -7,9 +7,8 @@ import townmapserver.config_manager as cm
 
 # To use, we need to create a settings.py modules in the same directory with
 # the following variables (USER, PASSWORD, HOST, PORT, DATABASE)
-DATABASE_URI = 'postgresql://{User}:{Password}@{Host}:{Port}/{Name}'.format(
-    **cm.config['Database']
-)
+BASE_CONNECTION_URI = 'postgresql://{user}:{password}@{host}:{port}/{name}'
+DATABASE_URI = BASE_CONNECTION_URI.format(**cm.config['Database'])
 
 db = flask_sqlalchemy.SQLAlchemy()
 
@@ -54,10 +53,20 @@ class Catch(db.Model):
         self.catchTime = catchTime
 
 
-def initialize_app(app):
-    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
+def initialize_app(app, connection_uri=DATABASE_URI):
+    app.config['SQLALCHEMY_DATABASE_URI'] = connection_uri
     # Disable Flask-SQLAlchemy tracking of modification to objects
     # See: http://flask-sqlalchemy.pocoo.org/2.1/config/
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
+
+
+def create_schema(app, username, password):
+    uri_args = dict(cm.config['Database'])
+    uri_args.update({'User': username, 'Password': password})
+    connection_uri = BASE_CONNECTION_URI.format(**uri_args)
+    initialize_app(app, connection_uri)
+
+    with app.app_context():
+        db.create_all()

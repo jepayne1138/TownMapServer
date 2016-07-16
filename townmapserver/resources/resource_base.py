@@ -1,4 +1,4 @@
-import flask.ext.restful as restful
+import flask_restful as restful
 
 
 class ResourceBase(restful.Resource):

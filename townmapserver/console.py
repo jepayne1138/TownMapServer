@@ -1,6 +1,8 @@
 """Handles the console interface for the Town Map Server application"""
 import sys
 import argparse
+import townmapserver.database as database
+import townmapserver.server as server
 
 
 def build_run_parser(subparsers):
@@ -56,6 +58,16 @@ def parse_arguments(args):
     return parser.parse_args(args)
 
 
+def handle_command_database(args):
+    if args.subcommand == 'create':
+        database.create_schema(server.flaskApp, args.username, args.password)
+
+
+def handle_command(args):
+    globals()['handle_command_{}'.format(args.command)](args)
+    # launch_server(args.address, args.port)
+
+
 def main():
     args = parse_arguments(sys.argv[1:])
-    # launch_server(args.address, args.port)
+    handle_command(args)

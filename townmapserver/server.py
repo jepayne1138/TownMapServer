@@ -1,7 +1,7 @@
 import flask
-import flask.ext.restful as restful
+import flask_restful as restful
 
-import resources
+import townmapserver.resources as resources
 
 flaskApp = flask.Flask(__name__)
 
