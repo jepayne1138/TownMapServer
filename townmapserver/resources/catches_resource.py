@@ -8,7 +8,7 @@ import townmapserver.database as database
 db = database.db
 
 
-GET_CATCHES_MARSHALLER = {
+CATCHES_MARSHALLER = {
     'trainerName': fields.String(attribute=lambda u: u.trainerName),
     'trainerLevel': fields.Integer(attribute=lambda u: u.trainerLevel),
     'usingLure': fields.Integer,
@@ -20,7 +20,7 @@ GET_CATCHES_MARSHALLER = {
 }
 
 
-class GetCatches(rb.ResourceBase):
+class Catches(rb.ResourceBase):
 
     @classmethod
     def urls(cls):
@@ -30,7 +30,7 @@ class GetCatches(rb.ResourceBase):
     def endpoint(cls):
         return 'catches'
 
-    @restful.marshal_with(GET_CATCHES_MARSHALLER)
+    @restful.marshal_with(CATCHES_MARSHALLER)
     def get(self):
         """Query catches with possible filters"""
         parser = reqparse.RequestParser()
@@ -55,7 +55,7 @@ class GetCatches(rb.ResourceBase):
         # Fetch, marshal, and return the catches
         return catch_query.all()
 
-    @restful.marshal_with(GET_CATCHES_MARSHALLER)
+    @restful.marshal_with(CATCHES_MARSHALLER)
     def post(self):
         """Add a catch"""
         parser = reqparse.RequestParser()
