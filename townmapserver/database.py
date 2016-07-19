@@ -1,4 +1,4 @@
-import datetime
+import time
 
 import flask_sqlalchemy
 
@@ -49,11 +49,12 @@ class Catch(db.Model):
         self.latitude = latitude
         self.longitude = longitude
         if catchTime is None:
-            catchTime = datetime.datetime.utcnow()
+            catchTime = time.time()
         self.catchTime = catchTime
 
 
-def build_connection_uri(user=None, password=None, host=None, port=None):
+def build_connection_uri(
+        user=None, password=None, host=None, port=None, **extras):
     """Build connection string out of given values or use config defaults"""
     user = cm.config_fallback(user, 'Database', 'User')
     password = cm.config_fallback(password, 'Database', 'Password')
@@ -72,14 +73,12 @@ def initialize_app(app, user=None, password=None, host=None, port=None):
     # See: http://flask-sqlalchemy.pocoo.org/2.1/config/
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    db.init_app(app)
+    with app.app_context():
+        db.init_app(app)
 
 
 def create_schema(app, username, password):
-    uri_args = dict(cm.config['Database'])
-    uri_args.update({'User': username, 'Password': password})
-    connection_uri = BASE_CONNECTION_URI.format(**uri_args)
-    initialize_app(app, connection_uri)
+    initialize_app(app, username, password)
 
     with app.app_context():
         db.create_all()

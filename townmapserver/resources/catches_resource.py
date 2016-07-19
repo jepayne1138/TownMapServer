@@ -3,17 +3,15 @@ import flask_restful.reqparse as reqparse
 import flask_restful.fields as fields
 
 from townmapserver.resources import resource_base as rb
-import townmapserver.database as database
-
-db = database.db
+import townmapserver.database as db
 
 
 CATCHES_MARSHALLER = {
-    'trainerName': fields.String(attribute=lambda u: u.trainerName),
-    'trainerLevel': fields.Integer(attribute=lambda u: u.trainerLevel),
-    'usingLure': fields.Integer,
+    'trainerName': fields.String(attribute=lambda x: x.user.trainerName),
+    'trainerLevel': fields.Integer(attribute=lambda x: x.user.trainerLevel),
+    'usingLure': fields.Boolean,
     'uwingIncense': fields.Boolean,
-    'creatureId': fields.Boolean,
+    'creatureId': fields.Integer,
     'latitude': fields.Float,
     'longitude': fields.Float,
     'catchTime': fields.Float,
@@ -24,7 +22,7 @@ class Catches(rb.ResourceBase):
 
     @classmethod
     def urls(cls):
-        return '/catches'
+        return ['/catches']
 
     @classmethod
     def endpoint(cls):
@@ -37,20 +35,23 @@ class Catches(rb.ResourceBase):
 
         # TODO: Set up this authentication after I get the API working
         # parser.add_argument('token', type=str, required=True, help='Invalid access token')
-
         parser.add_argument('starttime', type=float, default=None)
         parser.add_argument('endtime', type=float, default=None)
         parser.add_argument('limit', type=int, default=None)
         args = parser.parse_args()
 
         # Build the query based on the given arguments
-        catch_query = database.Catch.query
+        catch_query = db.Catch.query.order_by(db.Catch.catchTime.desc())
         if args.starttime is not None:
-            catch_query.filter_by(database.Catch.catchTime >= args.starttime)
-        if args.starttime is not None:
-            catch_query.filter_by(database.Catch.catchTime <= args.endtime)
+            catch_query = catch_query.filter(
+                db.Catch.catchTime >= args.starttime
+            )
+        if args.endtime is not None:
+            catch_query = catch_query.filter(
+                db.Catch.catchTime <= args.endtime
+            )
         if args.limit is not None:
-            catch_query.limit(args.limit)
+            catch_query = catch_query.limit(args.limit)
 
         # Fetch, marshal, and return the catches
         return catch_query.all()
@@ -70,9 +71,9 @@ class Catches(rb.ResourceBase):
         parser.add_argument('catchTime', type=float, required=True)
         args = parser.parse_args()
 
-        # Create the new catch and add it to the database
-        user = database.User.query.filter_by(database.User.token == args.token).first()
-        new_catch = database.Catch(
+        # Create the new catch and add it to the db
+        user = db.User.query.filter(db.User.token == args.token).first()
+        new_catch = db.Catch(
             user, args.creatureId, args.usingLure,
             args.usingIncense, args.latitude, args.longitude, args.catchTime
         )

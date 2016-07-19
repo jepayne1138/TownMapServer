@@ -17,6 +17,10 @@ def build_run_parser(subparsers):
         '-p', '--port', type=int, default=5000,
         help='Port for running the server'
     )
+    run_parser.add_argument(
+        '-d', '--debug', action='store_true',
+        help='Runs server in debug mode.'
+    )
     return run_parser
 
 
@@ -69,7 +73,7 @@ def handle_command_database(args):
 
 
 def handle_command_run(args):
-    raise NotImplementedError('Run command not yet implemented!')
+    server.launch_server(args.address, args.port, args.debug)
 
 
 def handle_command(args):
