@@ -60,7 +60,7 @@ def build_connection_uri(
     password = cm.config_fallback(password, 'Database', 'Password')
     host = cm.config_fallback(host, 'Database', 'Host')
     port = cm.config_fallback(port, 'Database', 'Port')
-    name = cm.config['Database']['Name']
+    name = cm.config.get('Database', 'Name')
 
     return BASE_CONNECTION_URI.format(**locals())
 

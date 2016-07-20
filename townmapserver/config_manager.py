@@ -1,12 +1,14 @@
 """Manages the configuration file"""
-import configparser
-
+try:
+    from configparser import ConfigParser
+except ImportError:
+    from ConfigParser import SafeConfigParser as ConfigParser
 
 CONFIG_PATH = 'config.ini'
 
-config = configparser.ConfigParser()
+config = ConfigParser()
 config.read(CONFIG_PATH)
 
 
 def config_fallback(value, section, key):
-    return config[section][key] if value is None else value
+    return config.get(section, key) if value is None else value
