@@ -59,8 +59,8 @@ def initialize_app(app):
         db.init_app(app)
 
 
-def create_schema(app, username, password):
-    initialize_app(app, username, password)
+def create_schema(app):
+    initialize_app(app)
 
     with app.app_context():
         db.create_all()
