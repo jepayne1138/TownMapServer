@@ -1,14 +1,10 @@
 import time
+import os
 
 import flask_sqlalchemy
 
-import townmapserver.config_manager as cm
-
-
 # To use, we need to create a settings.py modules in the same directory with
 # the following variables (USER, PASSWORD, HOST, PORT, DATABASE)
-BASE_CONNECTION_URI = 'postgresql://{user}:{password}@{host}:{port}/{name}'
-# DATABASE_URI = BASE_CONNECTION_URI.format(**cm.config['Database'])
 
 db = flask_sqlalchemy.SQLAlchemy()
 
@@ -53,22 +49,8 @@ class Catch(db.Model):
         self.catchTime = catchTime
 
 
-def build_connection_uri(
-        user=None, password=None, host=None, port=None, **extras):
-    """Build connection string out of given values or use config defaults"""
-    user = cm.config_fallback(user, 'Database', 'User')
-    password = cm.config_fallback(password, 'Database', 'Password')
-    host = cm.config_fallback(host, 'Database', 'Host')
-    port = cm.config_fallback(port, 'Database', 'Port')
-    name = cm.config.get('Database', 'Name')
-
-    return BASE_CONNECTION_URI.format(**locals())
-
-
-def initialize_app(app, user=None, password=None, host=None, port=None):
-    connection_uri = build_connection_uri(**locals())
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = connection_uri
+def initialize_app(app):
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
     # Disable Flask-SQLAlchemy tracking of modification to objects
     # See: http://flask-sqlalchemy.pocoo.org/2.1/config/
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
