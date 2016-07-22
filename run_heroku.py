@@ -5,8 +5,8 @@ from townmapserver import server
 
 
 required_configs = [
-    ('address', 'SERVER_HOST'),
-    ('port', 'SERVER_PORT'),
+    ('address', 'HOST'),
+    ('port', 'PORT'),
 ]
 
 
