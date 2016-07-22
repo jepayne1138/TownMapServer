@@ -4,3 +4,4 @@ venv*/
 *.pyc
 *.pyo
 *.ini
+.env
